@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/Audrey/Dropbox/school/COMP523/AndroidBeaconsAttendance/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c82741bc129dd5f99f11a4ab8666ae24262053b6">
+        <dex dex="/Users/Audrey/Dropbox/school/COMP523/AndroidBeaconsAttendance/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_467749df058021a6137cecb7eda1fd4d1c9e7da4/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Audrey/Dropbox/school/COMP523/AndroidBeaconsAttendance/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8a86bb304c7b907a2f2dc0ac1da5ef93a5ece19d">
+        <dex dex="/Users/Audrey/Dropbox/school/COMP523/AndroidBeaconsAttendance/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_ef76e71fb06630edd2ee4ff6b0812788b5aa6d4d/classes.dex" />
+    </item>
+
+</items>

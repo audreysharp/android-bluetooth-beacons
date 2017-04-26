@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Bluetooth Beacons Attendance</string>
+    <string name="app_title">Bluetooth Beacons Attendance</string>
+    <string name="instructor">Instructor</string>
+    <string name="student">Student</string>
+    <string name="welcome">Welcome, onyen</string>
+    <string name="checkin_button_student">Check In To Class</string>
+    <string name="checkin_button_instructor">Open Check-in Window</string>
+    <string name="course_dept_hint">COMP</string>
+    <string name="course_num_hint">550</string>
+    <string name="course_sect_hint">001</string>
+    <string name="web_button">View Past Attendance</string>
+    <string-array name="courses_array">
+        <item>COMP 530</item>
+        <item>STOR 435</item>
+        <item>MEJO 583</item>
+    </string-array>
+</resources>
