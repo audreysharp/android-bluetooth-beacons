@@ -47,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
     affiliation = settings.getString("affiliation", null);
 
     TextView welcomeString = (TextView) findViewById(R.id.welcomeMessage);
-    // String message = "Welcome, " + onyen;
-    String message = "Welcome, onyen";
+    String message = "Welcome, " + onyen;
     welcomeString.setText(message);
 
 //    EstimoteSDK.initialize(this, "android-bluetooth-attendan-5bb", "4a5bc182ebecf81fd0e5c20a4fb7155d");

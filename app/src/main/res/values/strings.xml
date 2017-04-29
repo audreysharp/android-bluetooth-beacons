@@ -10,9 +10,4 @@
     <string name="course_num_hint">550</string>
     <string name="course_sect_hint">001</string>
     <string name="web_button">View Past Attendance</string>
-    <string-array name="courses_array">
-        <item>COMP 530</item>
-        <item>STOR 435</item>
-        <item>MEJO 583</item>
-    </string-array>
 </resources>

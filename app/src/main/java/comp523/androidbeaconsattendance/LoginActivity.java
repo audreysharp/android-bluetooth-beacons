@@ -18,14 +18,17 @@ public class LoginActivity extends Activity {
         String userAffiliation = settings.getString("affiliation", "");
 
         if (hasLoggedIn && userAffiliation.contains("student")) {
+            // show student view
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         } else if (hasLoggedIn) {
-          Intent intent = new Intent(LoginActivity.this, MainActivityInstructor.class);
-          startActivity(intent);
-          finish();
+            // show instructor view if logged in and not student
+            Intent intent = new Intent(LoginActivity.this, MainActivityInstructor.class);
+            startActivity(intent);
+            finish();
         } else {
+            // go to single sign on page
             Intent intent = new Intent(LoginActivity.this, SingleSignOnActivity.class);
             startActivity(intent);
             finish();

@@ -7,9 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estimote.coresdk.common.config.EstimoteSDK;
@@ -24,7 +23,6 @@ import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.UUID;
 
 public class MainActivityInstructor extends AppCompatActivity {
 
@@ -55,22 +53,20 @@ public class MainActivityInstructor extends AppCompatActivity {
     onyen = settings.getString("onyen", null);
     affiliation = settings.getString("affiliation", null);
     uuid = "B9407F30-F5F8-466E-AFF9-25556B57FE6D"; // REMOVE WHEN TESTING BLUETOOTH
-    // Log.d("MAINACTIVITY", onyen + " " + affiliation);
 
-    populateCoursesSpinner();
+    TextView welcomeString = (TextView) findViewById(R.id.welcomeMessage);
+    String message = "Welcome, " + onyen;
+    welcomeString.setText(message);
+
     addListenerToCheckinButton();
     addListenerToWebButton();
 
     nearestBeacon = null;
     beaconManager = new BeaconManager(this);
 
-    // declare beacon regions for each individual beacon
-    region = new BeaconRegion("region1",
-        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-        null, null);
-    BeaconRegion region2 = new BeaconRegion("region2",
-        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-        null, null);
+    // declare beacon region to scan for all beacons within range
+    // BeaconRegion("name", UUID, minor, major)
+    region = new BeaconRegion("region1", null, null, null);
 
     beaconManager.setRangingListener(new BeaconManager.BeaconRangingListener() {
       @Override
@@ -125,13 +121,6 @@ public class MainActivityInstructor extends AppCompatActivity {
     });
   }
 
-  private void populateCoursesSpinner() {
-    Spinner spinner = (Spinner) findViewById(R.id.course_spinner);
-    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.courses_array, android.R.layout.simple_spinner_item);
-    adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-    spinner.setAdapter(adapter);
-  }
-
   /*
   When clicked, opens attendance dashboard
    */
@@ -142,8 +131,6 @@ public class MainActivityInstructor extends AppCompatActivity {
       public void onClick(View arg0) {
         Toast.makeText(MainActivityInstructor.this, "Viewing attendance...", Toast.LENGTH_LONG).show();
 
-        // WebView webView;
-        // setContentView(R.layout.webview_layout);
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shibboleth-yechoorv.cloudapps.unc.edu/secure/home.php"));
         startActivity(browserIntent);
       }
