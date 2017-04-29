@@ -3,10 +3,10 @@ package comp523.androidbeaconsattendance;
 import android.app.Application;
 import android.util.Log;
 
-import com.estimote.coresdk.common.config.EstimoteSDK;
-import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
-import com.estimote.coresdk.recognition.packets.Beacon;
-import com.estimote.coresdk.service.BeaconManager;
+import com.estimote.sdk.Beacon;
+import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.EstimoteSDK;
+import com.estimote.sdk.Region;
 
 import java.util.List;
 
@@ -23,11 +23,11 @@ public class BeaconActivity extends Application {
 
         beaconManager = new BeaconManager(getApplicationContext());
 
-        final BeaconRegion beaconsRegion = new BeaconRegion("All beacons", null, null, null);
+        final Region beaconsRegion = new Region("All beacons", null, null, null);
 
-        beaconManager.setRangingListener(new BeaconManager.BeaconRangingListener() {
+        beaconManager.setRangingListener(new BeaconManager.RangingListener() {
           @Override
-          public void onBeaconsDiscovered(BeaconRegion region, List<Beacon> beacons) {
+          public void onBeaconsDiscovered(Region region, List<Beacon> beacons) {
             if (beacons.size() != 0) {
               Log.d("Beacon", "BEACON DISCOVERED");
               Beacon beacon = beacons.get(0);

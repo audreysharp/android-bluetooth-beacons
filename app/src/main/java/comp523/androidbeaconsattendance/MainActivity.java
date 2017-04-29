@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
-import com.estimote.coresdk.recognition.packets.Beacon;
+import com.estimote.sdk.Beacon;
+import com.estimote.sdk.Region;
 
 import org.json.JSONObject;
 
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
   private Button checkin;
   private Button web;
 
-  BeaconRegion region;
+  Region region;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

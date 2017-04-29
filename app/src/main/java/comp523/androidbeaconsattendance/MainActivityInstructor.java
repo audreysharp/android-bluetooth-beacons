@@ -11,11 +11,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.estimote.coresdk.common.config.EstimoteSDK;
-import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
-import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
-import com.estimote.coresdk.recognition.packets.Beacon;
-import com.estimote.coresdk.service.BeaconManager;
+import com.estimote.sdk.Beacon;
+import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.EstimoteSDK;
+import com.estimote.sdk.Region;
+import com.estimote.sdk.SystemRequirementsChecker;
 
 import org.json.JSONObject;
 
@@ -39,7 +39,7 @@ public class MainActivityInstructor extends AppCompatActivity {
   private Button checkin;
   private Button web;
 
-  BeaconRegion region;
+  Region region;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +66,16 @@ public class MainActivityInstructor extends AppCompatActivity {
 
     // declare beacon region to scan for all beacons within range
     // BeaconRegion("name", UUID, minor, major)
-    region = new BeaconRegion("region1", null, null, null);
+    region = new Region("region1", null, null, null);
 
-    beaconManager.setRangingListener(new BeaconManager.BeaconRangingListener() {
+    beaconManager.setRangingListener(new BeaconManager.RangingListener() {
       @Override
-      public void onBeaconsDiscovered(BeaconRegion region, List<Beacon> list) {
+      public void onBeaconsDiscovered(Region region, List<Beacon> list) {
         if (!list.isEmpty()) {
           Beacon nearestBeacon = list.get(0);
           // nearestBeacon.describeContents();
           Toast.makeText(MainActivityInstructor.this, "Beacon discovered!", Toast.LENGTH_LONG).show();
-          Log.d("Nearest beacon key", nearestBeacon.getUniqueKey());
+          // Log.d("Nearest beacon key", nearestBeacon.getUniqueKey());
           Log.d("Nearest beacon uuid", nearestBeacon.getProximityUUID().toString());
           Log.d("Nearest beacon string", nearestBeacon.toString());
         }
