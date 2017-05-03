@@ -33,6 +33,7 @@ public class BeaconApplication extends Application {
             "Beacon discovered!",
             "You can now check in to your class.");
         MainActivity.inRangeOfBeacon = true;
+        MainActivityInstructor.inRangeOfBeacon = true;
       }
       @Override
       public void onExitedRegion(Region region) {

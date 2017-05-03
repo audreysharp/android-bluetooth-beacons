@@ -45,7 +45,6 @@ public class MainActivityInstructor extends AppCompatActivity {
   private Region region;
 
   private Beacon nearestBeacon;
-  private String nearestBeaconUUID;
 
   static Boolean inRangeOfBeacon = false;
 

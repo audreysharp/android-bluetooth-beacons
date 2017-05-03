@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
   private Region region;
 
   private Beacon nearestBeacon;
-  private String nearestBeaconUUID;
 
   static Boolean inRangeOfBeacon = false;
 
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
       public void onBeaconsDiscovered(Region region, List<Beacon> list) {
         if (!list.isEmpty()) {
           nearestBeacon = list.get(0);
-          Toast.makeText(MainActivity.this, "Beacon detected", Toast.LENGTH_LONG).show();
+          Toast.makeText(MainActivity.this, "Beacon detected!", Toast.LENGTH_LONG).show();
           uuid = nearestBeacon.getProximityUUID().toString();
         }
       }
