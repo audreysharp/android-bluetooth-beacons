@@ -3,6 +3,15 @@
 
     <item
         is-multidex="false"
+        jar="/Users/Audrey/.android/build-cache/a8bf4af4a2763b96dc6f374d2017b8da9bc0a3d8/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="2cd4b982617e544728de0782d718a58ce1b06e3f">
+        <dex dex="/Users/Audrey/Dropbox/school/COMP523/AndroidBeaconsAttendance/app/build/intermediates/pre-dexed/debug/classes_6cc91060af3b50caea29c45b4e543f495c965cf7.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/Audrey/.android/build-cache/9c45d414e915a3e23d7436bbcbe4d55b2efd7727/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"

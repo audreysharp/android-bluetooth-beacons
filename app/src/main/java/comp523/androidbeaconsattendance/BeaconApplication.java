@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
@@ -26,48 +25,30 @@ public class BeaconApplication extends Application {
     beaconManager = new BeaconManager(getApplicationContext());
 
     final Region beaconsRegion = new Region("All beacons", null, null, null);
-    // Log.d("BeaconApplication", "BeaconApplication started");
 
-    beaconManager.setRangingListener(new BeaconManager.RangingListener() {
+    beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
       @Override
-      public void onBeaconsDiscovered(Region region, List<Beacon> beacons) {
-        if (!beacons.isEmpty()) {
-          Log.d("Beacon", "BEACON DISCOVERED");
-          Toast.makeText(BeaconApplication.this, "BEACONAPPLICATION BEACON DISCOVERED!", Toast.LENGTH_LONG).show();
-          // Beacon nearestBeacon = beacons.get(0);
-          showNotification(
-              "Beacon discovered!",
-              "You can now check in to your class.");
-          MainActivity.inRangeOfBeacon = true;
-        }
+      public void onEnteredRegion(Region region, List<Beacon> list) {
+        showNotification(
+            "Beacon discovered!",
+            "You can now check in to your class.");
+        MainActivity.inRangeOfBeacon = true;
+      }
+      @Override
+      public void onExitedRegion(Region region) {
+        showNotification(
+            "No beacons in the area",
+            "You need to move closer to the beacon to check in.");
       }
     });
+
     beaconManager.setForegroundScanPeriod(5000, 10000);
-//
-//    beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
-//      @Override
-//      public void onEnteredRegion(Region region, List<Beacon> list) {
-//        showNotification(
-//            "Beacon discovered!",
-//            "You can now check in to your class.");
-//        MainActivity.inRangeOfBeacon = true;
-//      }
-//      @Override
-//      public void onExitedRegion(Region region) {
-//        showNotification(
-//            "No beacons in the area",
-//            "You need to move closer to the beacon to check in.");
-//      }
-//    });
-//
-//    beaconManager.setForegroundScanPeriod(5000, 10000);
-//    beaconManager.setBackgroundScanPeriod(5000, 10000);
+    beaconManager.setBackgroundScanPeriod(5000, 10000);
 
     beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
       @Override
       public void onServiceReady() {
-        beaconManager.startRanging(beaconsRegion);
-//        beaconManager.startMonitoring(beaconsRegion);
+        beaconManager.startMonitoring(beaconsRegion);
         Toast.makeText(BeaconApplication.this, "Scanning for beacons!", Toast.LENGTH_LONG).show();
       }
     });

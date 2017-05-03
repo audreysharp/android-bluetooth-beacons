@@ -12,17 +12,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.SystemRequirementsChecker;
 
-import org.json.JSONObject;
-
-import java.io.DataOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivityInstructor extends AppCompatActivity {
 
@@ -30,9 +33,9 @@ public class MainActivityInstructor extends AppCompatActivity {
 
   private Button checkin;
   private Button web;
-  private EditText department = (EditText) findViewById(R.id.course_dept);
-  private EditText number = (EditText) findViewById(R.id.course_num);
-  private EditText section = (EditText) findViewById(R.id.course_sect);
+  private EditText department;
+  private EditText number;
+  private EditText section;
 
   private String onyen;
   private String affiliation;
@@ -46,14 +49,22 @@ public class MainActivityInstructor extends AppCompatActivity {
 
   static Boolean inRangeOfBeacon = false;
 
+  private RequestQueue queue;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    setContentView(R.layout.activity_main_instructor);
+
+    queue = Volley.newRequestQueue(this); // this = context
 
     SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFERENCES_FILE, 0);
     onyen = settings.getString("onyen", null);
     affiliation = settings.getString("affiliation", null);
+
+    department = (EditText) findViewById(R.id.course_dept);
+    number = (EditText) findViewById(R.id.course_num);
+    section = (EditText) findViewById(R.id.course_sect);
 
     TextView welcomeString = (TextView) findViewById(R.id.welcomeMessage);
     String message = "Welcome, " + onyen;
@@ -113,6 +124,7 @@ public class MainActivityInstructor extends AppCompatActivity {
         } else {
           Toast.makeText(MainActivityInstructor.this, "Move closer to open the check-in window.", Toast.LENGTH_LONG).show();
         }
+        sendCheckinPost();
       }
     });
   }
@@ -137,44 +149,89 @@ public class MainActivityInstructor extends AppCompatActivity {
   Send checkin information (onyen, affiliation, beacon UUID, department, course number, course section) to /secure/home.php
   */
   public void sendCheckinPost() {
-    Thread thread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          URL url = new URL("https://shibboleth-yechoorv.cloudapps.unc.edu/backend/checkin.php");
-          HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-          conn.setRequestMethod("POST");
-          conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-          conn.setRequestProperty("Accept", "application/json");
-          conn.setDoOutput(true);
-          conn.setDoInput(true);
+//    Thread thread = new Thread(new Runnable() {
+//      @Override
+//      public void run() {
+//        try {
+//          URL url = new URL("https://shibboleth-yechoorv.cloudapps.unc.edu/backend/checkin.php");
+//          HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//          conn.setRequestMethod("POST");
+//          conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+//          conn.setRequestProperty("Accept", "application/json");
+//          conn.setDoOutput(true);
+//          conn.setDoInput(true);
+//          conn.connect();
+//
+//          JSONObject jsonParam = new JSONObject();
+//          // jsonParam.put("onyen", onyen);
+//          jsonParam.put("onyen", "yechoorv");
+//          // jsonParam.put("role", affiliation);
+//          jsonParam.put("role", "instructor");
+//          // jsonParam.put("department", department.getText().toString());
+//          jsonParam.put("department", "COMP");
+//          // jsonParam.put("number", number.getText().toString());
+//          jsonParam.put("number", "550");
+//          // jsonParam.put("section", section.getText().toString());
+//          jsonParam.put("section", "001");
+//          // jsonParam.put("beaconID", uuid);
+//          jsonParam.put("beaconID", "B9407F30-F5F8-466E-AFF9-25556B57FE6D");
+//
+//          Log.i("JSON", jsonParam.toString());
+//          DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+//          os.writeBytes(jsonParam.toString());
+//
+//          os.flush();
+//          os.close();
+//
+//          Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+//          Log.i("MSG", conn.getResponseMessage());
+//
+//          conn.disconnect();
+//        } catch (Exception e) {
+//          Toast.makeText(MainActivityInstructor.this, "There was an error opening the check-in window. Please try again.", Toast.LENGTH_LONG).show();
+//          e.printStackTrace();
+//        }
+//      }
+//    });
+//
+//    thread.start();
 
-          JSONObject jsonParam = new JSONObject();
-          jsonParam.put("onyen", onyen);
-          jsonParam.put("role", affiliation);
-          jsonParam.put("department", department.getText().toString());
-          jsonParam.put("number", department.getText().toString());
-          jsonParam.put("section", department.getText().toString());
-          jsonParam.put("beaconID", uuid);
-
-          Log.i("JSON", jsonParam.toString());
-          DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-          os.writeBytes(jsonParam.toString());
-
-          os.flush();
-          os.close();
-
-          Log.i("STATUS", String.valueOf(conn.getResponseCode()));
-          Log.i("MSG", conn.getResponseMessage());
-
-          conn.disconnect();
-        } catch (Exception e) {
-          Toast.makeText(MainActivityInstructor.this, "There was an error opening the check-in window. Please try again.", Toast.LENGTH_LONG).show();
-          e.printStackTrace();
+    String url = "https://shibboleth-yechoorv.cloudapps.unc.edu/backend/checkin.php";
+    StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+        new Response.Listener<String>() {
+          @Override
+          public void onResponse(String response) {
+            // response
+            Log.d("Response", response);
+          }
+        },
+        new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+            // error
+            Log.d("Error.Response", error.toString());
+          }
         }
-      }
-    });
+    ) {
+      @Override
+      protected Map<String, String> getParams() {
+        Map<String, String> params = new HashMap<String, String>();
+        // params.put("onyen", onyen);
 
-    thread.start();
+        // params.put("role", affiliation);
+        params.put("role", "instructor");
+        // params.put("department", department.getText().toString());
+        params.put("department", "COMP");
+        // params.put("number", number.getText().toString());
+        params.put("number", "550");
+        // params.put("section", section.getText().toString());
+        params.put("section", "001");
+        // params.put("beaconID", uuid);
+        params.put("beaconID", "B9407F30-F5F8-466E-AFF9-25556B57FE6D");
+
+        return params;
+      }
+    };
+    queue.add(postRequest);
   }
 }
