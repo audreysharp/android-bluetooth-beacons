@@ -8,12 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
-import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.SystemRequirementsChecker;
 
@@ -28,31 +28,32 @@ public class MainActivityInstructor extends AppCompatActivity {
 
   public static final String PREFERENCES_FILE = "BeaconsAttendancePreferences";
 
+  private Button checkin;
+  private Button web;
+  private EditText department = (EditText) findViewById(R.id.course_dept);
+  private EditText number = (EditText) findViewById(R.id.course_num);
+  private EditText section = (EditText) findViewById(R.id.course_sect);
+
   private String onyen;
   private String affiliation;
   private String uuid;
 
   private BeaconManager beaconManager;
+  private Region region;
+
   private Beacon nearestBeacon;
   private String nearestBeaconUUID;
 
-  private Button checkin;
-  private Button web;
-
-  Region region;
+  static Boolean inRangeOfBeacon = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main_instructor);
-
-    EstimoteSDK.initialize(this, "android-bluetooth-attendan-5bb", "4a5bc182ebecf81fd0e5c20a4fb7155d");
-    EstimoteSDK.enableDebugLogging(true);
+    setContentView(R.layout.activity_main);
 
     SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFERENCES_FILE, 0);
     onyen = settings.getString("onyen", null);
     affiliation = settings.getString("affiliation", null);
-    uuid = "B9407F30-F5F8-466E-AFF9-25556B57FE6D"; // REMOVE WHEN TESTING BLUETOOTH
 
     TextView welcomeString = (TextView) findViewById(R.id.welcomeMessage);
     String message = "Welcome, " + onyen;
@@ -61,27 +62,23 @@ public class MainActivityInstructor extends AppCompatActivity {
     addListenerToCheckinButton();
     addListenerToWebButton();
 
-    nearestBeacon = null;
     beaconManager = new BeaconManager(this);
-
-    // declare beacon region to scan for all beacons within range
-    // BeaconRegion("name", UUID, minor, major)
-    region = new Region("region1", null, null, null);
-
     beaconManager.setRangingListener(new BeaconManager.RangingListener() {
       @Override
       public void onBeaconsDiscovered(Region region, List<Beacon> list) {
         if (!list.isEmpty()) {
-          Beacon nearestBeacon = list.get(0);
-          // nearestBeacon.describeContents();
-          Toast.makeText(MainActivityInstructor.this, "Beacon discovered!", Toast.LENGTH_LONG).show();
-          // Log.d("Nearest beacon key", nearestBeacon.getUniqueKey());
-          Log.d("Nearest beacon uuid", nearestBeacon.getProximityUUID().toString());
-          Log.d("Nearest beacon string", nearestBeacon.toString());
+          nearestBeacon = list.get(0);
+          Toast.makeText(MainActivityInstructor.this, "Beacon detected!", Toast.LENGTH_LONG).show();
+          uuid = nearestBeacon.getProximityUUID().toString();
         }
       }
     });
+    beaconManager.setForegroundScanPeriod(5000, 10000);
+    beaconManager.setBackgroundScanPeriod(5000, 10000);
+
+    region = new Region("All beacons", null, null, null);
   }
+
 
   @Override
   protected void onResume() {
@@ -110,13 +107,12 @@ public class MainActivityInstructor extends AppCompatActivity {
     checkin.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View arg0) {
-        /*if (nearestBeacon != null) {
+        if (nearestBeacon != null && inRangeOfBeacon) {
           sendCheckinPost();
-          Toast.makeText(MainActivity.this, "Successfully checked into class!", Toast.LENGTH_LONG).show();
+          Toast.makeText(MainActivityInstructor.this, "Successfully opened check-in window!", Toast.LENGTH_LONG).show();
         } else {
-          Toast.makeText(MainActivity.this, "Move closer to the beacon to check in.", Toast.LENGTH_LONG).show();
-        }*/
-        sendCheckinPost();
+          Toast.makeText(MainActivityInstructor.this, "Move closer to open the check-in window.", Toast.LENGTH_LONG).show();
+        }
       }
     });
   }
@@ -129,7 +125,7 @@ public class MainActivityInstructor extends AppCompatActivity {
     web.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View arg0) {
-        Toast.makeText(MainActivityInstructor.this, "Viewing attendance...", Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivityInstructor.this, "Loading attendance...", Toast.LENGTH_LONG).show();
 
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shibboleth-yechoorv.cloudapps.unc.edu/secure/home.php"));
         startActivity(browserIntent);
@@ -138,7 +134,7 @@ public class MainActivityInstructor extends AppCompatActivity {
   }
 
   /*
-  Send checkin information (onyen, affiliation, beacon UUID) to /secure/home.php
+  Send checkin information (onyen, affiliation, beacon UUID, department, course number, course section) to /secure/home.php
   */
   public void sendCheckinPost() {
     Thread thread = new Thread(new Runnable() {
@@ -155,8 +151,11 @@ public class MainActivityInstructor extends AppCompatActivity {
 
           JSONObject jsonParam = new JSONObject();
           jsonParam.put("onyen", onyen);
-          jsonParam.put("affiliation", affiliation);
-          jsonParam.put("uuid", uuid);
+          jsonParam.put("role", affiliation);
+          jsonParam.put("department", department.getText().toString());
+          jsonParam.put("number", department.getText().toString());
+          jsonParam.put("section", department.getText().toString());
+          jsonParam.put("beaconID", uuid);
 
           Log.i("JSON", jsonParam.toString());
           DataOutputStream os = new DataOutputStream(conn.getOutputStream());
@@ -170,7 +169,7 @@ public class MainActivityInstructor extends AppCompatActivity {
 
           conn.disconnect();
         } catch (Exception e) {
-          Toast.makeText(MainActivityInstructor.this, "There was an error checking into class. Please try again.", Toast.LENGTH_LONG).show();
+          Toast.makeText(MainActivityInstructor.this, "There was an error opening the check-in window. Please try again.", Toast.LENGTH_LONG).show();
           e.printStackTrace();
         }
       }

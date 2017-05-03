@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void onClick(View arg0) {
         if (nearestBeacon != null && inRangeOfBeacon) {
-          // sendCheckinPost();
+          sendCheckinPost();
           Toast.makeText(MainActivity.this, "Successfully checked into class!", Toast.LENGTH_LONG).show();
         } else {
           Toast.makeText(MainActivity.this, "Move closer to the beacon to check in.", Toast.LENGTH_LONG).show();
@@ -147,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
             JSONObject jsonParam = new JSONObject();
             jsonParam.put("onyen", onyen);
-            jsonParam.put("affiliation", affiliation);
-            jsonParam.put("uuid", uuid);
+            jsonParam.put("role", affiliation);
+            jsonParam.put("beaconID", uuid);
 
             Log.i("JSON", jsonParam.toString());
             DataOutputStream os = new DataOutputStream(conn.getOutputStream());

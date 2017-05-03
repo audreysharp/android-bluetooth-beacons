@@ -56,12 +56,6 @@ public class SingleSignOnActivity extends Activity {
                 setLoginInfo(onyen, affiliation);
 
                 // leave webview and go to main screen
-
-                Intent intent = new Intent(SingleSignOnActivity.this, MainActivityInstructor.class);
-                // Intent intent = new Intent(SingleSignOnActivity.this, MainActivity.class);
-                finish();
-                startActivity(intent);
-                /*
                 if (affiliation.contains("student")) {
                     Intent intent = new Intent(SingleSignOnActivity.this, MainActivity.class);
                     finish();
@@ -70,7 +64,7 @@ public class SingleSignOnActivity extends Activity {
                     Intent intent = new Intent(SingleSignOnActivity.this, MainActivityInstructor.class);
                     finish();
                     startActivity(intent);
-                }*/
+                }
 
             }
         }
