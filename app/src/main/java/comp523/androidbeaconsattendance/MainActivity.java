@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
       public void onBeaconsDiscovered(Region region, List<Beacon> list) {
         if (!list.isEmpty()) {
           nearestBeacon = list.get(0);
-          Toast.makeText(MainActivity.this, "MainActivity Beacon detected!!!!", Toast.LENGTH_LONG).show();
+          Toast.makeText(MainActivity.this, "Beacon detected", Toast.LENGTH_LONG).show();
           uuid = nearestBeacon.getProximityUUID().toString();
         }
       }
@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
           Toast.makeText(MainActivity.this, "Move closer to the beacon to check in.", Toast.LENGTH_LONG).show();
         }
-        sendCheckinPost();
       }
     });
   }
@@ -141,44 +140,6 @@ public class MainActivity extends AppCompatActivity {
   Send checkin information (onyen, affiliation, beacon UUID) to /secure/home.php
   */
   public void sendCheckinPost() {
-//      Thread thread = new Thread(new Runnable() {
-//        @Override
-//        public void run() {
-//          try {
-//            URL url = new URL("https://shibboleth-yechoorv.cloudapps.unc.edu/backend/checkin.php");
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("POST");
-//            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-//            conn.setRequestProperty("Accept", "application/json");
-//            conn.setDoOutput(true);
-//            conn.setDoInput(true);
-//
-//            JSONObject jsonParam = new JSONObject();
-//            jsonParam.put("onyen", onyen);
-//            jsonParam.put("role", "student");
-//            // jsonParam.put("beaconID", uuid);
-//            jsonParam.put("beaconID", "B9407F30-F5F8-466E-AFF9-25556B57FE6D");
-//
-//            Log.i("JSON", jsonParam.toString());
-//            DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-//            os.writeBytes(jsonParam.toString());
-//
-//            os.flush();
-//            os.close();
-//
-//            Log.i("STATUS", String.valueOf(conn.getResponseCode()));
-//            Log.i("MSG", conn.getResponseMessage());
-//
-//            conn.disconnect();
-//          } catch (Exception e) {
-//            Toast.makeText(MainActivity.this, "There was an error checking into class. Please try again.", Toast.LENGTH_LONG).show();
-//            e.printStackTrace();
-//          }
-//        }
-//      });
-//
-//      thread.start();
-
     String url = "https://shibboleth-yechoorv.cloudapps.unc.edu/backend/checkin.php";
     StringRequest postRequest = new StringRequest(Request.Method.POST, url,
         new Response.Listener<String>() {
@@ -201,9 +162,7 @@ public class MainActivity extends AppCompatActivity {
         Map<String, String> params = new HashMap<String, String>();
         params.put("onyen", onyen);
         params.put("role", "student");
-        // params.put("beaconID", uuid);
-        params.put("beaconID", "B9407F30-F5F8-466E-AFF9-25556B57FE6D");
-
+        params.put("beaconID", uuid);
         return params;
       }
     };

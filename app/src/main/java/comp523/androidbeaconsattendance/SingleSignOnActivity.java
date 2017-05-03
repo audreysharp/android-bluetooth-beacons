@@ -55,7 +55,7 @@ public class SingleSignOnActivity extends Activity {
 
                 setLoginInfo(onyen, affiliation);
 
-                // leave webview and go to main screen
+                 // leave webview and go to main screen
                 if (affiliation.contains("student")) {
                     Intent intent = new Intent(SingleSignOnActivity.this, MainActivity.class);
                     finish();
