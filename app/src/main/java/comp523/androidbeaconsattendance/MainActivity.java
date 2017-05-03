@@ -12,30 +12,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
+import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
+import com.estimote.sdk.SystemRequirementsChecker;
 
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
   public static final String PREFERENCES_FILE = "BeaconsAttendancePreferences";
 
+  private Button checkin;
+  private Button web;
+
   private String onyen;
   private String affiliation;
   private String uuid;
 
-  // private BeaconManager beaconManager = new BeaconManager(getApplicationContext());
+  private BeaconManager beaconManager;
+  private Region region;
+
   private Beacon nearestBeacon;
   private String nearestBeaconUUID;
 
-  private Button checkin;
-  private Button web;
-
-  Region region;
+  static Boolean inRangeOfBeacon = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -50,44 +55,27 @@ public class MainActivity extends AppCompatActivity {
     String message = "Welcome, " + onyen;
     welcomeString.setText(message);
 
-//    EstimoteSDK.initialize(this, "android-bluetooth-attendan-5bb", "4a5bc182ebecf81fd0e5c20a4fb7155d");
-//    EstimoteSDK.enableDebugLogging(true);
-
-    uuid = "B9407F30-F5F8-466E-AFF9-25556B57FE6D"; // REMOVE WHEN TESTING BLUETOOTH
-    // Log.d("MAINACTIVITY", onyen + " " + affiliation);
-
     addListenerToCheckinButton();
     addListenerToWebButton();
 
-    // beaconManager.
-
-    /*nearestBeacon = null;
     beaconManager = new BeaconManager(this);
-
-    // declare beacon regions for each individual beacon
-    region = new BeaconRegion("region1",
-        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-        null, null);
-    BeaconRegion region2 = new BeaconRegion("region2",
-        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-        null, null);
-
-    beaconManager.setRangingListener(new BeaconManager.BeaconRangingListener() {
+    beaconManager.setRangingListener(new BeaconManager.RangingListener() {
       @Override
-      public void onBeaconsDiscovered(BeaconRegion region, List<Beacon> list) {
+      public void onBeaconsDiscovered(Region region, List<Beacon> list) {
         if (!list.isEmpty()) {
-          Beacon nearestBeacon = list.get(0);
-          // nearestBeacon.describeContents();
-          Toast.makeText(MainActivity.this, "Beacon discovered!", Toast.LENGTH_LONG).show();
-          Log.d("Nearest beacon key", nearestBeacon.getUniqueKey());
-          Log.d("Nearest beacon uuid", nearestBeacon.getProximityUUID().toString());
-          Log.d("Nearest beacon string", nearestBeacon.toString());
+          nearestBeacon = list.get(0);
+          Toast.makeText(MainActivity.this, "MainActivity Beacon detected!!!!", Toast.LENGTH_LONG).show();
+          uuid = nearestBeacon.getProximityUUID().toString();
         }
       }
-    });*/
+    });
+    beaconManager.setForegroundScanPeriod(5000, 10000);
+    beaconManager.setBackgroundScanPeriod(5000, 10000);
+
+    region = new Region("All beacons", null, null, null);
   }
 
-  /*
+
   @Override
   protected void onResume() {
     super.onResume();
@@ -105,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
   protected void onPause() {
     beaconManager.stopRanging(region);
     super.onPause();
-  }*/
+  }
 
   /*
   When clicked, checks into class by POSTing to /secure/home.php
@@ -115,13 +103,12 @@ public class MainActivity extends AppCompatActivity {
     checkin.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View arg0) {
-        /*if (nearestBeacon != null) {
-          sendCheckinPost();
+        if (nearestBeacon != null && inRangeOfBeacon) {
+          // sendCheckinPost();
           Toast.makeText(MainActivity.this, "Successfully checked into class!", Toast.LENGTH_LONG).show();
         } else {
           Toast.makeText(MainActivity.this, "Move closer to the beacon to check in.", Toast.LENGTH_LONG).show();
-        }*/
-        sendCheckinPost();
+        }
       }
     });
   }
@@ -136,8 +123,6 @@ public class MainActivity extends AppCompatActivity {
       public void onClick(View arg0) {
         Toast.makeText(MainActivity.this, "Viewing attendance...", Toast.LENGTH_LONG).show();
 
-        // WebView webView;
-        // setContentView(R.layout.webview_layout);
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://shibboleth-yechoorv.cloudapps.unc.edu/secure/home.php"));
         startActivity(browserIntent);
       }
