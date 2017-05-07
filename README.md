@@ -1,13 +1,14 @@
 # Android Bluetooth Beacons
 
-Android application companion for the [bluetooth beacons web application](https://github.com/audreysharp/bluetooth-beacons).
+Android companion application for the [bluetooth beacons web application](https://github.com/audreysharp/bluetooth-beacons).
 
 [Web Application Live Demo](https://shibboleth-yechoorv.cloudapps.unc.edu)  
 [Project Website](http://bluetoothbeacon.web.unc.edu/)  
+[iOS Application Companion](https://github.com/audreysharp/ios-bluetooth-beacons)
 
 This application allows instructors to open check-in windows and students to check in to their classes.
 
-Compatible with Android 4.3+
+Compatible with Android 4.3+.
 
 Uses Estimote SDK v0.16.0.
 
